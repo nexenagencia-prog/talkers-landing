@@ -2,7 +2,7 @@ import SiteHeader from '../../components/SiteHeader';
 import CastingGrid from '../../components/CastingGrid';
 import TalkersFooter from '../../components/TalkersFooter';
 import { supabaseAdmin } from '../../lib/supabase';
-import { TALKERS_SETTINGS, TALKERS_NAV, TALKERS_SECTIONS, ensureTalkersV10 } from '../../lib/talkersDefaults';
+import { TALKERS_SETTINGS, TALKERS_NAV, TALKERS_SECTIONS, ensureTalkersV11 } from '../../lib/talkersDefaults';
 import { dedupeNav, dedupeSections } from '../../lib/dedupe';
 
 export const dynamic='force-dynamic';
@@ -12,7 +12,7 @@ async function load(){
   const sb=supabaseAdmin();
   if(!sb) return {settings:TALKERS_SETTINGS,nav:TALKERS_NAV,section:fallbackSection};
   try{
-    await ensureTalkersV10(sb);
+    await ensureTalkersV11(sb);
     const [{data:settings},{data:nav},{data:sections}] = await Promise.all([
       sb.from('site_settings').select('*').limit(1).maybeSingle(),
       sb.from('nav_items').select('*').eq('enabled',true).order('sort_order'),

@@ -2,7 +2,7 @@ import { supabaseAdmin } from '../lib/supabase';
 import SiteHeader from '../components/SiteHeader';
 import SectionRenderer from '../components/SectionRenderer';
 import TalkersFooter from '../components/TalkersFooter';
-import { TALKERS_SETTINGS, TALKERS_NAV, TALKERS_SECTIONS, ensureTalkersV10 } from '../lib/talkersDefaults';
+import { TALKERS_SETTINGS, TALKERS_NAV, TALKERS_SECTIONS, ensureTalkersV11 } from '../lib/talkersDefaults';
 import { dedupeNav, dedupeSections } from '../lib/dedupe';
 
 const fallback={settings:TALKERS_SETTINGS,nav:TALKERS_NAV,sections:TALKERS_SECTIONS};
@@ -12,7 +12,7 @@ async function loadData(){
   const sb=supabaseAdmin();
   if(!sb) return fallback;
   try{
-    await ensureTalkersV10(sb);
+    await ensureTalkersV11(sb);
     const [{data:settings},{data:nav},{data:sections}] = await Promise.all([
       sb.from('site_settings').select('*').limit(1).maybeSingle(),
       sb.from('nav_items').select('*').eq('enabled',true).order('sort_order'),

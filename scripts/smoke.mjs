@@ -18,10 +18,10 @@ const must = [
   [admin,"contact_email",'contact CMS field'],
   [admin,"SpeakersEditor",'speaker CMS editor'],
   [admin,"TestimonialsEditor",'testimonial CMS editor'],
-  [defaults,'ui_version:9','one-time UI migration marker'],
+  [defaults,'ui_version:11','one-time UI migration marker'],
   [defaults,"slug:'casting'",'shared casting section'],
-  [page,'ensureTalkersV9','homepage migration call'],
-  [casting,'ensureTalkersV9','casting migration call'],
+  [page,'ensureTalkersV11','homepage migration call'],
+  [casting,'ensureTalkersV11','casting migration call'],
   [css,'.talkers-hero','premium hero styles'],
   [css,'.section-space','spacious section rhythm'],
   [css,'.talkers-footer','editable footer styles'],
@@ -34,4 +34,4 @@ for (const [hay,needle,label] of must) {
   if(!hay.includes(needle)){console.error(`MISSING: ${label} -> ${needle}`);failed=true;}
 }
 if(failed) process.exit(1);
-console.log('Talkers V9 duplicate-fix smoke checks passed');
+console.log('Talkers V11 migration smoke checks passed');
