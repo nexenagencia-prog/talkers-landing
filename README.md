@@ -36,3 +36,7 @@ Nenhuma edição de conteúdo exige alterar JSON ou código.
 7. Acesse `/admin` para editar o site.
 
 O bucket `media` aceita arquivos de até 500 MB conforme `supabase.sql`. O limite real também pode depender do plano/configuração da sua conta Supabase/Vercel.
+
+
+## Login de recuperação
+Se `ADMIN_PASSWORD` não estiver configurada na Vercel, o CMS usa automaticamente uma senha de recuperação com hash armazenado apenas no servidor. Para produção, recomenda-se configurar `ADMIN_PASSWORD`; assim a senha de recuperação deixa de ser usada automaticamente.
