@@ -12,15 +12,30 @@ const blankByKind = {
 };
 const blankSection={id:null,slug:'nova-secao',kind:'split',sort_order:50,enabled:true,content:blankByKind.split};
 
-export default function AdminClient({authenticated}){
- const [auth,setAuth]=useState(authenticated),[password,setPassword]=useState(''),[data,setData]=useState(null),[msg,setMsg]=useState(''),[uploading,setUploading]=useState(false);
- async function load(){const r=await fetch('/api/cms',{cache:'no-store'});if(r.ok)setData(await r.json());else if(r.status===401)setAuth(false);}
- useEffect(()=>{if(auth)load()},[auth]);
- async function login(e){e.preventDefault();const r=await fetch('/api/login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({password})});if(r.ok){setAuth(true);setPassword('')}else setMsg('Senha inválida');}
- async function api(action,payload={}){setMsg('Salvando...');const r=await fetch('/api/cms',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action,...payload})});const j=await r.json();setMsg(r.ok?'Salvo com sucesso':j.error||'Erro');if(r.ok)await load();}
+export default function AdminClient({authenticated,initialData=null,initialError=null}){
+ const [auth,setAuth]=useState(authenticated),[password,setPassword]=useState(''),[data,setData]=useState(initialData),[msg,setMsg]=useState(initialError||''),[uploading,setUploading]=useState(false);
+ async function login(e){
+   e.preventDefault();
+   setMsg('Entrando...');
+   try{
+     const r=await fetch('/api/login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({password}),credentials:'same-origin'});
+     if(r.ok){location.reload();return;}
+     setMsg('Senha inválida');
+   }catch(e){setMsg('Não foi possível entrar. Tente novamente.');}
+ }
+ async function api(action,payload={}){
+   setMsg('Salvando...');
+   try{
+     const r=await fetch('/api/cms',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action,...payload}),credentials:'same-origin'});
+     const j=await r.json().catch(()=>({}));
+     if(!r.ok){setMsg(j.error||'Erro ao salvar');if(r.status===401)setAuth(false);return;}
+     setMsg('Salvo com sucesso');
+     location.reload();
+   }catch(e){setMsg('Erro de conexão ao salvar');}
+ }
  async function upload(file){if(!file)return null;setUploading(true);const f=new FormData();f.append('file',file);const r=await fetch('/api/upload',{method:'POST',body:f});const j=await r.json();setUploading(false);if(!r.ok){setMsg(j.error||'Erro no upload');return null}setMsg('Upload concluído');return j.url;}
  if(!auth)return <div className="login"><form className="loginbox" onSubmit={login}><h1>CMS</h1><p className="small">Entre com a senha configurada em ADMIN_PASSWORD na Vercel.</p><F label="Senha" type="password" value={password} onChange={setPassword}/><button>Entrar</button>{msg&&<p>{msg}</p>}</form></div>;
- if(!data)return <div className="admin">Carregando CMS...</div>;
+ if(!data)return <div className="admin"><div className="panel"><h2>CMS</h2><p>{msg||'Não foi possível carregar os dados do CMS.'}</p><button onClick={()=>location.reload()}>Tentar novamente</button></div></div>;
  return <div className="admin"><div className="adminbar"><h1>CMS completo</h1><a href="/" target="_blank"><button className="secondary">Ver site</button></a><button className="secondary" onClick={async()=>{await fetch('/api/logout',{method:'POST'});location.reload()}}>Sair</button></div>{msg&&<p>{msg}</p>}
   <SettingsPanel settings={data.settings||{}} save={x=>api('save_settings',{data:x})} upload={upload} uploading={uploading}/>
   <NavPanel nav={data.nav||[]} save={x=>api('save_nav',{data:x})} del={id=>api('delete_nav',{id})}/>
