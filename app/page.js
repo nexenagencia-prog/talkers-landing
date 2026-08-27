@@ -2,7 +2,8 @@ import { supabaseAdmin } from '../lib/supabase';
 import SiteHeader from '../components/SiteHeader';
 import SectionRenderer from '../components/SectionRenderer';
 import TalkersFooter from '../components/TalkersFooter';
-import { TALKERS_SETTINGS, TALKERS_NAV, TALKERS_SECTIONS, ensureTalkersV8 } from '../lib/talkersDefaults';
+import { TALKERS_SETTINGS, TALKERS_NAV, TALKERS_SECTIONS, ensureTalkersV9 } from '../lib/talkersDefaults';
+import { dedupeNav, dedupeSections } from '../lib/dedupe';
 
 const fallback={settings:TALKERS_SETTINGS,nav:TALKERS_NAV,sections:TALKERS_SECTIONS};
 export const dynamic='force-dynamic';
@@ -11,13 +12,15 @@ async function loadData(){
   const sb=supabaseAdmin();
   if(!sb) return fallback;
   try{
-    await ensureTalkersV8(sb);
+    await ensureTalkersV9(sb);
     const [{data:settings},{data:nav},{data:sections}] = await Promise.all([
       sb.from('site_settings').select('*').limit(1).maybeSingle(),
       sb.from('nav_items').select('*').eq('enabled',true).order('sort_order'),
       sb.from('sections').select('*').eq('enabled',true).order('sort_order')
     ]);
-    return {settings:settings||fallback.settings,nav:nav?.length?nav:fallback.nav,sections:sections?.length?sections:fallback.sections};
+    const cleanNav=dedupeNav(nav||[]).filter(x=>x.enabled!==false);
+    const cleanSections=dedupeSections(sections||[]).filter(x=>x.enabled!==false);
+    return {settings:settings||fallback.settings,nav:cleanNav.length?cleanNav:fallback.nav,sections:cleanSections.length?cleanSections:fallback.sections};
   }catch{return fallback;}
 }
 

@@ -2,7 +2,8 @@ import SiteHeader from '../../components/SiteHeader';
 import CastingGrid from '../../components/CastingGrid';
 import TalkersFooter from '../../components/TalkersFooter';
 import { supabaseAdmin } from '../../lib/supabase';
-import { TALKERS_SETTINGS, TALKERS_NAV, TALKERS_SECTIONS, ensureTalkersV8 } from '../../lib/talkersDefaults';
+import { TALKERS_SETTINGS, TALKERS_NAV, TALKERS_SECTIONS, ensureTalkersV9 } from '../../lib/talkersDefaults';
+import { dedupeNav, dedupeSections } from '../../lib/dedupe';
 
 export const dynamic='force-dynamic';
 const fallbackSection=TALKERS_SECTIONS.find(s=>s.slug==='casting');
@@ -11,13 +12,15 @@ async function load(){
   const sb=supabaseAdmin();
   if(!sb) return {settings:TALKERS_SETTINGS,nav:TALKERS_NAV,section:fallbackSection};
   try{
-    await ensureTalkersV8(sb);
-    const [{data:settings},{data:nav},{data:section}] = await Promise.all([
+    await ensureTalkersV9(sb);
+    const [{data:settings},{data:nav},{data:sections}] = await Promise.all([
       sb.from('site_settings').select('*').limit(1).maybeSingle(),
       sb.from('nav_items').select('*').eq('enabled',true).order('sort_order'),
-      sb.from('sections').select('*').eq('slug','casting').maybeSingle()
+      sb.from('sections').select('*').eq('slug','casting').order('updated_at',{ascending:false})
     ]);
-    return {settings:settings||TALKERS_SETTINGS,nav:nav?.length?nav:TALKERS_NAV,section:section||fallbackSection};
+    const cleanNav=dedupeNav(nav||[]).filter(x=>x.enabled!==false);
+    const section=dedupeSections(sections||[]).find(x=>x.slug==='casting'&&x.enabled!==false);
+    return {settings:settings||TALKERS_SETTINGS,nav:cleanNav.length?cleanNav:TALKERS_NAV,section:section||fallbackSection};
   }catch{return {settings:TALKERS_SETTINGS,nav:TALKERS_NAV,section:fallbackSection};}
 }
 
