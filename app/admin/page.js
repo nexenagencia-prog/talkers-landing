@@ -1,13 +1,14 @@
 import { cookies } from 'next/headers';
 import { COOKIE_NAME, validCookie } from '../../lib/auth';
-import { supabaseAdmin } from '../../lib/supabase';
+import { supabaseAdmin, getSupabaseConfigStatus } from '../../lib/supabase';
 import AdminClient from './AdminClient';
 
 export const dynamic='force-dynamic';
 
 async function loadCmsData(){
+  const config=getSupabaseConfigStatus();
   const sb=supabaseAdmin();
-  if(!sb) return {data:null,error:'Supabase não configurado'};
+  if(!sb) return {data:null,error:config.reason||'Supabase não configurado'};
   try{
     const [{data:settings,error:e1},{data:nav,error:e2},{data:sections,error:e3}] = await Promise.all([
       sb.from('site_settings').select('*').limit(1).maybeSingle(),
@@ -18,7 +19,8 @@ async function loadCmsData(){
     if(error) return {data:null,error:error.message};
     return {data:{settings,nav:nav||[],sections:sections||[]},error:null};
   }catch(e){
-    return {data:null,error:e?.message||'Erro ao carregar o CMS'};
+    const detail=e?.cause?.message||e?.message||'Erro ao carregar o CMS';
+    return {data:null,error:`Não foi possível conectar ao Supabase. ${detail}`};
   }
 }
 
