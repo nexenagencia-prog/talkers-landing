@@ -1,42 +1,58 @@
-# Landing Premium + CMS completo
+# Talkers Landing + CMS V8
 
-Projeto Next.js preparado para GitHub + Vercel + Supabase.
+Versão preparada para substituir os arquivos do projeto GitHub atual `talkers-landing` sem criar um novo projeto Vercel/Supabase.
 
-## O que é editável no /admin
+## O que foi preservado
+
+- Next.js App Router
+- Login do CMS em `/admin`
+- Supabase já conectado pela Vercel
+- Upload para o bucket `media`
+- APIs `/api/login`, `/api/logout`, `/api/cms`, `/api/upload`, `/api/health`
+- Página `/casting` com card que expande ao clicar
+
+## Nova interface
+
+A home foi reconstruída para a direção aprovada: hero escura cinematográfica, blocos amplos e separados, cards arredondados, tipografia editorial, seção de confiança, depoimentos, faixa de marca, soluções, números, casting, FAQ, CTA e rodapé.
+
+## CMS totalmente editável
+
+O CMS permite editar:
+
 - nome da marca, logo e favicon
-- cores globais e raio dos cards
-- menus: texto, link, ordem e status
-- botão principal do topo
-- texto do rodapé
-- todas as seções: tipo, ordem, publicação, altura, padding, tema e cores
-- eyebrow, títulos, subtítulos e textos
-- imagens e posição da imagem
-- upload de imagem, vídeo e áudio
-- autoplay de vídeo/áudio e poster do vídeo
-- todos os botões: texto, link e estilo
-- todos os cards: kicker, título, texto, imagem, botão e link
-- depoimentos/card lateral
-- indicadores e números
-- FAQ: cada pergunta e cada resposta
-- criação, remoção e reordenação de itens dentro das seções
-- criação e exclusão de seções inteiras
+- menus, ordem, links e status
+- botão do topo
+- SEO do site
+- e-mail, telefone, cidade e WhatsApp
+- Instagram, LinkedIn e YouTube
+- textos e títulos do rodapé
+- título, descrição, etiqueta, tema, altura e espaçamento de cada seção
+- botões e links
+- imagens da hero e cards
+- benefícios e ícones
+- depoimentos, nomes, cargos, estrelas e fotos
+- faixa de marca
+- cards de soluções
+- métricas
+- os 14 palestrantes: nome, categoria, cargo, descrição, bio, foto, tags e link
+- textos exclusivos da página `/casting`
+- FAQ e CTA final
 
-Nenhuma edição de conteúdo exige alterar JSON ou código.
+## Migração automática V8
 
-## Instalação rápida
-1. Crie um projeto no Supabase.
-2. Abra SQL Editor e execute `supabase.sql`.
-3. Crie um repositório no GitHub e envie todos os arquivos deste projeto.
-4. Importe o repositório na Vercel.
-5. Configure as variáveis do `.env.example` na Vercel:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `SUPABASE_SERVICE_ROLE_KEY`
-   - `ADMIN_PASSWORD`
-6. Faça o deploy.
-7. Acesse `/admin` para editar o site.
+Não é necessário rodar novo SQL no projeto existente. Na primeira abertura da home, `/casting` ou `/admin`, o código verifica `theme_json.ui_version`. Se ainda não for `8`, aplica uma única vez a estrutura visual padrão Talkers e marca a versão como 8. Depois disso, alterações feitas no CMS não são sobrescritas.
 
-O bucket `media` aceita arquivos de até 500 MB conforme `supabase.sql`. O limite real também pode depender do plano/configuração da sua conta Supabase/Vercel.
+As variáveis que já funcionam na Vercel permanecem as mesmas:
 
+- `SUPABASE_URL`
+- `SUPABASE_SECRET_KEY` ou `SUPABASE_SERVICE_ROLE_KEY`
+- `ADMIN_PASSWORD`
 
-## Login de recuperação
-Se `ADMIN_PASSWORD` não estiver configurada na Vercel, o CMS usa automaticamente uma senha de recuperação com hash armazenado apenas no servidor. Para produção, recomenda-se configurar `ADMIN_PASSWORD`; assim a senha de recuperação deixa de ser usada automaticamente.
+## Verificação
+
+Execute:
+
+```bash
+npm run smoke
+npm run build
+```

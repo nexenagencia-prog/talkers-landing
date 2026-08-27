@@ -55,3 +55,10 @@ where not exists (select 1 from public.sections where slug='faq');
 insert into storage.buckets (id,name,public,file_size_limit,allowed_mime_types)
 values ('media','media',true,524288000,null)
 on conflict (id) do update set public=true, file_size_limit=524288000;
+
+-- Permissões do CMS (necessárias para a chave server-side usada pela Vercel)
+grant usage on schema public to service_role;
+grant all privileges on all tables in schema public to service_role;
+grant all privileges on all sequences in schema public to service_role;
+alter default privileges in schema public grant all privileges on tables to service_role;
+alter default privileges in schema public grant all privileges on sequences to service_role;
