@@ -20,7 +20,7 @@ export default function SectionRenderer({section,settings}){
   const kind=section.kind||'split';
   const cls=`section section-space ${c.theme==='dark'?'dark':'light'} ${kind==='hero'?'hero':''}`;
   const style={minHeight:c.min_height?`${c.min_height}px`:undefined,paddingTop:c.padding_y?`${c.padding_y}px`:undefined,paddingBottom:c.padding_y?`${c.padding_y}px`:undefined,backgroundColor:c.background_color||undefined,color:c.text_color||undefined};
-  const bgStyle={backgroundImage:c.image_url?`url(${c.image_url})`:undefined,backgroundPosition:c.image_position||'center'};
+  const bgStyle={backgroundImage:c.image_url?`url(${c.image_url})`:undefined,backgroundPosition:c.image_position||'center','--hero-mobile-position':c.image_position_mobile||'right center'};
 
   if(kind==='hero') return <section id={section.slug} className={`${cls} ${section.slug==='top'?'talkers-hero':''}`} style={style}>
     {c.image_url&&<div className="hero-bg" style={bgStyle}/>}<div className="hero-shade"/><div className="section-inner hero-inner"><div className="eyebrow">{c.eyebrow}</div><h1 className="h1">{c.title}</h1>{c.text&&<p className="lead">{c.text}</p>}<Buttons items={c.buttons}/>{c.feature_title&&<div className="hero-card">{c.feature_image_url&&<div className="hero-card-thumb" style={{backgroundImage:`url(${c.feature_image_url})`}}/>}<div><div className="small">{c.feature_kicker}</div><h3>{c.feature_title}</h3><p>{c.feature_text}</p></div><span className="circle-arrow">→</span></div>}</div>
