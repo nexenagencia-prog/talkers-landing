@@ -15,7 +15,7 @@ export default function KineticTalkers({logo}){
  <section className="kt-hero">
  <header className="kt-nav"><a className="kt-logo" href="/#top" aria-label="Talkers início">{logo?<img src={logo} alt="Talkers"/>:'talkers.'}</a><nav aria-label="Principal"><a href="#sobre">Sobre</a><a href="#temas">Temas</a><a href="#palestrantes">Palestrantes</a></nav><a className="kt-outline" href="#contato">Vamos conversar <Arrow/></a></header>
  <div className="kt-hero-copy"><h1>Redefina<br/><span>seu próximo palco.</span></h1><p>Grandes histórias, novas perspectivas.<br/>A voz certa para mover sua audiência.</p><a className="kt-pill" href="#palestrantes"><i className="kt-orb"/> Encontre sua voz <Arrow/></a></div>
- <div className="kt-reference-hero"><ReferencePhoto region="280 55 465 275"/></div>
+ <div className="kt-reference-hero"><ReferencePhoto region="280 55 465 210"/></div>
  <a href="#curadoria" className="kt-hero-feature"><ReferencePhoto region="780 120 195 65"/><span className="kt-tag">Inteligência em curadoria</span><span><small>CONTEÚDO + CONTEXTO</small><strong>Conexões com propósito.</strong><em>Conheça nossa visão <Arrow/></em></span></a>
  <div className="kt-word" aria-hidden="true">talkers.</div>
  </section>
